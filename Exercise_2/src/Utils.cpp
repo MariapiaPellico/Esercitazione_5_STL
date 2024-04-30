@@ -247,7 +247,6 @@ bool EdgesControl(const PolygonalMesh& mesh){
 
 bool AreasControl(const PolygonalMesh& mesh)
 {
-    double areaTot = 0;
     for (unsigned int c = 0; c < mesh.NumberCell2D; c++)
     {
         const vector<unsigned int>& vertices = mesh.Cell2DVertices[c];
@@ -273,14 +272,12 @@ bool AreasControl(const PolygonalMesh& mesh)
             sum = sum + sumi;
         }
         area_polygon = 0.5 * abs(sum);
-        areaTot += area_polygon;
         if (area_polygon < 1e-16)
         {
             cerr << "Area of the polygon " << c << " too short or null." << endl;
             return false;
         }
     }
-    cout << areaTot << endl;
     return true;
 }
 }
