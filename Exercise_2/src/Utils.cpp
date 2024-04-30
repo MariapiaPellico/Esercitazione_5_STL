@@ -1,4 +1,5 @@
 #include "Utils.hpp"
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -246,6 +247,7 @@ bool EdgesControl(const PolygonalMesh& mesh){
 
 bool AreasControl(const PolygonalMesh& mesh)
 {
+    double areaTot = 0;
     for (unsigned int c = 0; c < mesh.NumberCell2D; c++)
     {
         const vector<unsigned int>& vertices = mesh.Cell2DVertices[c];
@@ -257,7 +259,8 @@ bool AreasControl(const PolygonalMesh& mesh)
             return false;
         }
 
-        double area = 0;
+        double sum = 0;
+        double area_polygon = 0;
         for (unsigned int i = 0; i < numVertices; ++i)
         {
             unsigned int vertex1 = vertices[i];
@@ -266,15 +269,18 @@ bool AreasControl(const PolygonalMesh& mesh)
             Vector2d coordinates1 = mesh.Cell0DCoordinates[vertex1];
             Vector2d coordinates2 = mesh.Cell0DCoordinates[vertex2];
 
-            double area_polygon = 0.5 * abs((coordinates1.x()*coordinates2.y())-(coordinates2.x()*coordinates1.y()));
-            area = area + area_polygon;
-            if (area < 1e-16)
-            {
-                cerr << "Area of the polygon " << c << " too short or null." << endl;
-                return false;
-            }
+            double sumi = (coordinates1.x()*coordinates2.y())-(coordinates2.x()*coordinates1.y());
+            sum = sum + sumi;
+        }
+        area_polygon = 0.5 * abs(sum);
+        areaTot += area_polygon;
+        if (area_polygon < 1e-16)
+        {
+            cerr << "Area of the polygon " << c << " too short or null." << endl;
+            return false;
         }
     }
+    cout << areaTot << endl;
     return true;
 }
 }
